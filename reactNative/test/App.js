@@ -1,36 +1,25 @@
-import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
-import React ,{useState} from 'react';
-import app from './firebase';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-export default function App() {
-  
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { View , Text,StyleSheet } from 'react-native';
+import SignUp from './signUp';
+// import Login from './login';
+// import Upload from './upload';
 
-  const [email,setEmail] = useState('')
-  const [password , setPassword] = useState('')
-  const auth = getAuth()
-const handleRegister = async ()=>{
-try{
-  const userCred = await createUserWithEmailAndPassword(auth,email,password)
-var user =  userCred.user
-console.log(user,'gggg')
-}
-catch(err){
-  console.log(err)
-}
-}
+const Stack = createNativeStackNavigator()
+
+export default function App () {
   return (
-    <View style={styles.container}>
-     <TextInput placeholder='email' value={email} onChangeText={setEmail} >
-     </TextInput>
-     <TextInput placeholder='password' value={password} onChangeText={setPassword}  secureTextEntry>
-     </TextInput>
-     <Button title = 'register' onPress={handleRegister}></Button>
-    </View>
-  );
-} 
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen name="Login" component={SignUp} />
 
-const styles = StyleSheet.create({
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+ };
+
+ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
@@ -38,3 +27,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+ 
