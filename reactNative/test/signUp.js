@@ -35,6 +35,8 @@ const hadnleNavigate = ( )=>{
   );
 } 
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

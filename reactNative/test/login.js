@@ -17,7 +17,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
           console.log(err)
         }
       }
-      
+  
         return (
          <View style={styles.container } >
       <TextInput placeholder='email' value={email} onChangeText={setEmail} />

@@ -13,7 +13,7 @@ export default function App () {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="signUp">
       <Stack.Screen name="signUp" component={SignUp} />
-      <Stack.Screen name="login" component={Login} />
+      <Stack.Screen name="login"  component={Login} />
       <Stack.Screen name="upload" component={Upload} />
       
       </Stack.Navigator>
