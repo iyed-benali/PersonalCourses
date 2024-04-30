@@ -24,29 +24,46 @@ export default function AddLocation({ navigation }) {
     try {
       await axios.post('http://localhost:3000/api/addLocation', { latitude, longitude });
       console.log('Location added successfully');
-      fetchLocations(); // Fetch locations again after adding new location
+      fetchLocations();
     } catch (err) {
       console.error(err);
     }
   };
 
- const renderLocationItem = ({ item }) => (
-  <View style={styles.locationItem}>
-    <Text>{`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}</Text>
-    <View style={styles.buttonContainer}>
-      <Button
-        title="Delete"
-        onPress={() => handleDeleteLocation(item._id)}
-        color="red"
-      />
-      <Button
-        title="Update"
-        onPress={() => handleUpdateLocation(item._id)}
-      />
-    </View>
-  </View>
-);
+  const handleDeleteLocation = async (locationId) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/deleteLocation/${locationId}`);
+      fetchLocations(); // Refresh locations after deletion
+    } catch (error) {
+      console.error('Error deleting location:', error);
+    }
+  };
 
+  const handleUpdateLocation = async (locationId) => {
+    try {
+      // You can implement navigation to an update screen passing locationId as a parameter
+      console.log(`Navigating to update location screen for location id: ${locationId}`);
+    } catch (error) {
+      console.error('Error updating location:', error);
+    }
+  };
+
+  const renderLocationItem = ({ item }) => (
+    <View style={styles.locationItem}>
+      <Text>{`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}</Text>
+      <View style={styles.buttonContainer}>
+        <Button
+          title="Delete"
+          onPress={() => handleDeleteLocation(item._id)}
+          color="red"
+        />
+        <Button
+          title="Update"
+          onPress={() => handleUpdateLocation(item._id)}
+        />
+      </View>
+    </View>
+  );
 
   return (
     <View style={styles.container}>
@@ -106,5 +123,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
   },
 });
