@@ -57,6 +57,32 @@ const locationSchema = new mongoose.Schema({
       res.status(500).json({ error: 'An error occurred' });
     }
   });
+app.delete('/api/deleteLocation/:id', async (req, res) => {
+  try {
+    const locationId = req.params.id;
+    await Location.findByIdAndDelete(locationId);
+    res.status(200).json({ message: 'Location deleted successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
+// Update request to update a location's latitude and/or longitude by id
+app.put('/api/updateLocation/:id', async (req, res) => {
+  try {
+    const locationId = req.params.id;
+    const { latitude, longitude } = req.body;
+    const updatedFields = {};
+    if (latitude) updatedFields.latitude = latitude;
+    if (longitude) updatedFields.longitude = longitude;
+    await Location.findByIdAndUpdate(locationId, updatedFields);
+    res.status(200).json({ message: 'Location updated successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
   
 
 
