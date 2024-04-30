@@ -30,11 +30,23 @@ export default function AddLocation({ navigation }) {
     }
   };
 
-  const renderLocationItem = ({ item }) => (
-    <View style={styles.locationItem}>
-      <Text>{`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}</Text>
+ const renderLocationItem = ({ item }) => (
+  <View style={styles.locationItem}>
+    <Text>{`Latitude: ${item.latitude}, Longitude: ${item.longitude}`}</Text>
+    <View style={styles.buttonContainer}>
+      <Button
+        title="Delete"
+        onPress={() => handleDeleteLocation(item._id)}
+        color="red"
+      />
+      <Button
+        title="Update"
+        onPress={() => handleUpdateLocation(item._id)}
+      />
     </View>
-  );
+  </View>
+);
+
 
   return (
     <View style={styles.container}>
