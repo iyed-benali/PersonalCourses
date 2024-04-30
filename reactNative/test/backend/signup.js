@@ -34,6 +34,15 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
+app.get('/api/getLocations', async (req, res) => {
+  try {
+    const locations = await Location.find();
+    res.status(200).json(locations);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
 
 
 const locationSchema = new mongoose.Schema({
