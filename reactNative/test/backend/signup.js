@@ -5,7 +5,12 @@ const bodyParser = require('body-parser');
 const app = express();
 
 
-mongoose.connect('mongodb://localhost:27017/myapp', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb://localhost:27017/local').then(()=>{
+  console.log('database connected')
+})
+.catch((err)=>{
+throw err
+})
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
@@ -50,9 +55,6 @@ const locationSchema = new mongoose.Schema({
     latitude: Number,
     longitude: Number,
   });
-
-
-  
   
   const Location = mongoose.model('Location', locationSchema);
   app.post('/api/addLocation', async (req, res) => {
