@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 
-mongoose.connect('mongodb://127.0.0.1/jihedgay').then(()=>{
+mongoose.connect('mongodb://127.0.0.1/lightingStreet').then(()=>{
   console.log('database connected')
 })
 .catch((err)=>{
@@ -66,15 +66,28 @@ const locationSchema = new mongoose.Schema({
     locations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }]
   });
   
+  app.post('/addRue', async (req, res) => {
+    try {
+      const newRue = new Rue(req.body);
+      const savedRue = await newRue.save();
+      res.status(201).json(savedRue);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  });
+  
 
 const Rue = mongoose.model('Rue',rueSchema)
+
 app.post('/api/addLocation', async (req, res) => {
   try {
     const {  latitude, longitude } = req.body;
     const location = new Location({ state: true, latitude, longitude });
     await location.save();
     const rueId = req.body.rueId; 
+console.log(rueId);
     const rue = await Rue.findById(rueId);
+    console.log(rue,"fffff")
     if (!rue) {
       return res.status(404).json({ error: 'Rue not found' });
     }

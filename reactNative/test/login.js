@@ -11,7 +11,7 @@ import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
       const handleLogin = async () =>{
         try{
           await signInWithEmailAndPassword(auth,email,password)
-          navigation.navigate('upload')
+          navigation.navigate('Rue')
         }
         catch(err){
           console.log(err)

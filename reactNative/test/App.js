@@ -4,20 +4,17 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { View , Text,StyleSheet } from 'react-native';
 import SignUp from './signUp';
 import Login from './login';
-import Upload from './upload';
 import  AddLocation from './location.js'
-
+import Rue from './rue.js';
 const Stack = createNativeStackNavigator()
-
 export default function App () {
-  return (
+  return(
     <NavigationContainer>
       <Stack.Navigator initialRouteName="signUp">
       <Stack.Screen name="signUp" component={SignUp} />
       <Stack.Screen name="Rue" component={Rue} />
       <Stack.Screen name="login"  component={Login} />
       <Stack.Screen name="upload" component={AddLocation} />
-      
       </Stack.Navigator>
     </NavigationContainer>
   );
