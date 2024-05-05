@@ -1,28 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, TextInput, View, Text, FlatList } from 'react-native';
 import axios from 'axios';
+import { useRoute } from '@react-navigation/native';
 
 export default function AddLocation({ navigation }) {
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
   const [locations, setLocations] = useState([]);
 
+  const route = useRoute();
+  const streetId = route.params?.streetId;
   useEffect(() => {
-    fetchLocations();
-  }, []);
+    if (streetId) {
+      fetchLocations();
+    }
+  }, [streetId]);
+
 
   const fetchLocations = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/getLocations');
+      const response = await axios.get(`http://192.168.1.41:5000/api/getLocations/${streetId}`);
       setLocations(response.data);
     } catch (error) {
       console.error('Error fetching locations:', error);
     }
   };
 
+
   const handleAddLocation = async () => {
     try {
-      await axios.post('http://localhost:3000/api/addLocation', { latitude, longitude });
+      await axios.post('http://192.168.1.41:5000/api/addLocation', { latitude, longitude });
       console.log('Location added successfully');
       fetchLocations();
     } catch (err) {
@@ -32,7 +39,7 @@ export default function AddLocation({ navigation }) {
 
   const handleDeleteLocation = async (locationId) => {
     try {
-      await axios.delete(`http://localhost:3000/api/deleteLocation/${locationId}`);
+      await axios.delete(`http://192.168.1.41:5000/api/deleteLocation/${locationId}`);
       fetchLocations(); // Refresh locations after deletion
     } catch (error) {
       console.error('Error deleting location:', error);

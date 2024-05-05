@@ -5,6 +5,7 @@ import { View , Text,StyleSheet } from 'react-native';
 import SignUp from './signUp';
 import Login from './login';
 import Upload from './upload';
+import  AddLocation from './location.js'
 
 const Stack = createNativeStackNavigator()
 
@@ -13,8 +14,9 @@ export default function App () {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="signUp">
       <Stack.Screen name="signUp" component={SignUp} />
+      <Stack.Screen name="Rue" component={Rue} />
       <Stack.Screen name="login"  component={Login} />
-      <Stack.Screen name="upload" component={Upload} />
+      <Stack.Screen name="upload" component={AddLocation} />
       
       </Stack.Navigator>
     </NavigationContainer>

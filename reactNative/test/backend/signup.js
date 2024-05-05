@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const app = express();
 
 
-mongoose.connect('mongodb://localhost:27017/local').then(()=>{
+mongoose.connect('mongodb://127.0.0.1/jihedgay').then(()=>{
   console.log('database connected')
 })
 .catch((err)=>{
@@ -14,15 +14,12 @@ throw err
 const db = mongoose.connection;
 
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-
-
 app.use(bodyParser.json());
 
 
 const userSchema = new mongoose.Schema({
   email: String,
   password: String,
-  id : Number
 });
 
 const User = mongoose.model('User', userSchema);
@@ -31,7 +28,7 @@ const User = mongoose.model('User', userSchema);
 app.post('/api/signup', async (req, res) => {
   try {
     const { email, password  } = req.body;
-    const user = new User({ email, password , id: Math.random()* 1000000 });
+    const user = new User({ email, password });
     await user.save();
     res.status(201).json({ message: 'User created successfully' });
   } catch (err) {
@@ -39,10 +36,14 @@ app.post('/api/signup', async (req, res) => {
     res.status(500).json({ error: 'An error occurred' });
   }
 });
-app.get('/api/getLocations', async (req, res) => {
+app.get('/api/getLocations/:rueId', async (req, res) => {
   try {
-    const locations = await Location.find();
-    res.status(200).json(locations);
+    const rueId = req.params.rueId;
+    const rue = await Rue.findById(rueId).populate('locations');
+    if (!rue) {
+      return res.status(404).json({ error: 'Rue not found' });
+    }
+    res.status(200).json(rue.locations);
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'An error occurred' });
@@ -50,24 +51,42 @@ app.get('/api/getLocations', async (req, res) => {
 });
 
 
+
 const locationSchema = new mongoose.Schema({
-    userId: mongoose.Types.ObjectId,
+    state : Boolean,
     latitude: Number,
     longitude: Number,
   });
   
   const Location = mongoose.model('Location', locationSchema);
-  app.post('/api/addLocation', async (req, res) => {
-    try {
-      const { userId, latitude, longitude } = req.body;
-      const location = new Location({ userId, latitude, longitude });
-      await location.save();
-      res.status(201).json({ message: 'Location added successfully' });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: 'An error occurred' });
-    }
+
+  const rueSchema = new mongoose.Schema({
+    name: String,
+    city: String,
+    locations: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Location' }]
   });
+  
+
+const Rue = mongoose.model('Rue',rueSchema)
+app.post('/api/addLocation', async (req, res) => {
+  try {
+    const {  latitude, longitude } = req.body;
+    const location = new Location({ state: true, latitude, longitude });
+    await location.save();
+    const rueId = req.body.rueId; 
+    const rue = await Rue.findById(rueId);
+    if (!rue) {
+      return res.status(404).json({ error: 'Rue not found' });
+    }
+    rue.locations.push(location._id);
+    await rue.save();
+    res.status(201).json({ message: 'Location added successfully' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred' });
+  }
+});
+
 app.delete('/api/deleteLocation/:id', async (req, res) => {
   try {
     const locationId = req.params.id;
@@ -79,7 +98,6 @@ app.delete('/api/deleteLocation/:id', async (req, res) => {
   }
 });
 
-// Update request to update a location's latitude and/or longitude by id
 app.put('/api/updateLocation/:id', async (req, res) => {
   try {
     const locationId = req.params.id;
@@ -95,6 +113,56 @@ app.put('/api/updateLocation/:id', async (req, res) => {
   }
 });
   
+
+app.get('/rues', async (req, res) => {
+  try {
+    const rues = await Rue.find().populate('locations');
+    res.json(rues);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
+
+app.get('/rues/:id', async (req, res) => {
+  try {
+    const rue = await Rue.findById(req.params.id);
+    if (!rue) {
+      return res.status(404).json({ message: 'Rue not found' });
+    }
+    res.json(rue);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.put('/rues/:id', async (req, res) => {
+  try {
+    const { name, city } = req.body;
+    const updatedRue = await Rue.findByIdAndUpdate(req.params.id, { name, city }, { new: true });
+    if (!updatedRue) {
+      return res.status(404).json({ message: 'Rue not found' });
+    }
+    res.json(updatedRue);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+app.delete('/rues/:id', async (req, res) => {
+  try {
+    const deletedRue = await Rue.findByIdAndDelete(req.params.id);
+    if (!deletedRue) {
+      return res.status(404).json({ message: 'Rue not found' });
+    }
+    res.json({ message: 'Rue deleted' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 
 
 const PORT = process.env.PORT || 5000;

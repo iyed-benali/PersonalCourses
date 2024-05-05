@@ -3,20 +3,16 @@ import { Button, StyleSheet, TextInput, View } from 'react-native';
 import axios from 'axios'; // Import Axios
 import app from './firebase';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
-
 export default function SignUp({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const auth = getAuth();
-
   const handleRegister = async () => {
     try {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const user = userCred.user;
 
-      await axios.post('http://localhost:3000/api/signup', { email, password });
-
+      await axios.post('http://192.168.1.41:5000/api/signup', { email, password }); 
       console.log('User registered:', user);
       navigation.navigate('login');
     } catch (err) {
