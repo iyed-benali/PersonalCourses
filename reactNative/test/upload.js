@@ -48,7 +48,7 @@ export default function Upload() {
     const source = { uri: result.assets[0].uri };
     setImage(source);
   };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <TouchableOpacity style={styles.selectButton} onPress={pickImage}>
